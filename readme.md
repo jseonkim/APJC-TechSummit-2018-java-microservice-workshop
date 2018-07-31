@@ -425,6 +425,168 @@ curl localhost:8080/workshop/photos/all
 
 
 ## Lab-4
+Create a docker image and push it to ECR
+### Table of Contents
+1. [Building docker](#Building-docker)  
+1.1 [Install docker tools (optional)](#Install-docker-tools-(optional))   
+1.2 [Create and test](#Create-and-test)  
+1.3 [More commands for Debug (Optional)](#More-commands-for-Debug-(Optional))
+2. [ECR](#ECR)  
+2.1 [Create an ECR repository](#Create-an-ECR-repository)  
+2.2 [Push your images](#Push-your-images)  
+2.3 [Check the pushed image](#Check-the-pushed-image)
+
+
+### Building docker
+
+Reference : 
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html#docker-basics-create-image
+
+#### Install docker tools (optional)
+
+If you are able to use YUM, then use following command
+```
+sudo yum install -y docker
+```
+
+#### Create and test
+
+1. Check a Dockerfile
+
+Dockerfile in **module-04**
+
+```
+FROM openjdk:8-jdk-alpine
+VOLUME /tmp
+ARG JAR_FILE
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+```
+
+2. Create a docker image
+- You need to create 2 docker images for **module-03-mysql** and **module-03-ddb**
+	
+```	
+docker build -t user-service-mysql:latest . --build-arg JAR_FILE="./target/<YOUR_ARTIFACT_FILE>"
+
+```
+
+3. Run docker in your local machine
+	
+```
+docker run -d -p 80:8080 --name=user-service user-service-mysql
+```
+
+4. Check running docker and stop it
+```
+docker ps
+
+docker stop <CONTAINER ID>
+```
+
+5. Remove all container
+
+```
+#stop all running docker
+docker stop $(docker ps -a -q)
+
+# Delete all containers
+docker rm $(docker ps -a -q)
+
+# Delete all images
+docker rmi $(docker images -q)
+```
+
+#### More commands for Debug (Optional)
+
+1. List stack:
+
+```
+docker stack ls
+```
+
+2. List services in the stack:
+
+```
+docker stack services myapp
+```
+
+3. List containers:
+
+```
+docker container ls -f name=myapp*
+```
+
+4. Get logs for all the containers in the webapp service:
+
+```
+docker service logs myapp_webapp-service
+```
+
+
+### ECR
+
+#### Create an ECR repository
+
+1. Run a following AWS CLI command
+
+```
+aws ecr create-repository --repository-name user-service-repo	
+	
+```
+2. Check response and save a repository ARN
+
+```
+{
+    "repository": {
+        "registryId": "550622896891", 
+        "repositoryName": "user-service-repo", 
+        "repositoryArn": "arn:aws:ecr:ap-southeast-1:<account id>:repository/user-service-repo", 
+        "createdAt": 1516947869.0, 
+        "repositoryUri": "<account id>.dkr.ecr.ap-southeast-1.amazonaws.com/user-service-repo"
+    }
+}
+
+```
+
+3. Get Authentication
+
+```
+aws ecr get-login --no-include-email --region ap-southeast-1 | sh
+```
+
+4. Run above result
+
+
+#### Push your images
+
+```
+docker tag user-service-mysql:latest  <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service:latest 
+
+docker push  <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service:latest
+```
+
+
+#### Check the pushed image
+
+1. You can describe the images in a repository using following command.
+
+```
+aws ecr describe-images --repository-name user-service
+
+```
+
+2. Pull the image using the docker pull
+
+```
+docker pull <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service:latest
+
+docker images 
+
+docker run -d -p 80:8080 --name=user-service-mysql <IMAGE_ID>
+
+docker ps
+```
 
 <hr>
 

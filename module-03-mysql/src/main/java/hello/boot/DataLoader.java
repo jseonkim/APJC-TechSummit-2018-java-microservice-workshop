@@ -1,10 +1,8 @@
 package hello.boot;
 
 import hello.model.Image;
-import hello.model.PhotoInfo;
 import hello.model.User;
 import hello.repository.ImageRepository;
-import hello.repository.PhotoInfoRepository;
 import hello.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -15,13 +13,11 @@ public class DataLoader implements CommandLineRunner {
 
     private UserRepository userRepository;
     private ImageRepository imageRepository;
-    private PhotoInfoRepository photoInfoRepository;
-
+    
     @Autowired
-    public void setProductRepository(UserRepository userRepository, ImageRepository imageRepository, PhotoInfoRepository photoInfoRepository) {
+    public void setProductRepository(UserRepository userRepository, ImageRepository imageRepository) {
         this.userRepository = userRepository;
         this.imageRepository = imageRepository;
-        this.photoInfoRepository = photoInfoRepository;
     }
 
     @Override

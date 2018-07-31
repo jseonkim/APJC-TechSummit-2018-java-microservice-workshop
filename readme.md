@@ -205,7 +205,7 @@ java -jar target/module-01-0.1.0.jar
 
 ## Lab-2
 
--Externalize Configuration / Expose Application Metrics and information
+- Externalize Configuration / Expose Application Metrics and information
 
 ### Table of Contents
 1. [Run application (module-02)](#Run-application-(module-02))
@@ -425,7 +425,7 @@ curl localhost:8080/workshop/photos/all
 
 
 ## Lab-4
-Create a docker image and push it to ECR
+- Create a docker image and push it to ECR
 ### Table of Contents
 1. [Building docker](#Building-docker)  
 1.1 [Install docker tools (optional)](#Install-docker-tools-(optional))   
@@ -593,6 +593,8 @@ docker ps
 ## Lab-5
 - Create a ECR
 - We assume there are 2 ECR repo : **user-service**, **photo-service**
+<br>
+<br>
 - We can create ECR stack using CloudFormation and also update it
 - ECS has the ability to perform rolling upgrades to your ECS services to minimize downtime during deployments. For more information, see Updating a Service.
 - To update one of your services to a new version, adjust the Image parameter in the service template (in services/* to point to the new version of your container image. 
@@ -602,7 +604,7 @@ docker ps
 1. [Create a Stack using CloudFormation](#Create-a-Stack-using-CloudFormation)  
 2. [Update a ECR Stack using CloudFormation](#Update-an-ECR-Stack-using-CloudFormation)  
 2.1 [Create a new service definition](#Create-a-new-services-definition)  
-2.2 [Modify a service.yml](#Modify-a-service.yml)  
+2.2 [Modify service.yml](#Modify-service.yml)  
 2.3 [Update master.yml](#Update-master.yml)
 
 ### Create a Stack using CloudFormation
@@ -614,7 +616,7 @@ docker ps
 1. Add user-service folder under **service**
 2. Copy antoher service.yml to user-service
 
-#### Modify a service.yml 
+#### Modify service.yml 
 
 1. Update the ContainerName and Image parameters
 

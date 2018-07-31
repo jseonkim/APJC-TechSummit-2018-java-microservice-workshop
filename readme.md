@@ -157,9 +157,7 @@ curl 'localhost:8080/workshop/images/all'
 ```
 
 #### Check the web pages
-Open *localhost:8080/index.html*  
-Run CRUD for User data  
-Check user list, add/update/delete user
+Open *localhost:8080*  
 
 Open *localhost:8080/users/add*, *localhost:8080/users*
 
@@ -593,7 +591,6 @@ docker ps
 ## Lab-5
 - Create a ECR
 - We assume there are 2 ECR repo : **user-service**, **photo-service**
-<br>
 <br>
 
 - We can create ECR stack using CloudFormation and also update it

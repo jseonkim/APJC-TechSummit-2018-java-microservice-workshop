@@ -591,8 +591,106 @@ docker ps
 <hr>
 
 ## Lab-5
+- Create a ECR
+- We assume there are 2 ECR repo : **user-service**, **photo-service**
+- We can create ECR stack using CloudFormation and also update it
+- ECS has the ability to perform rolling upgrades to your ECS services to minimize downtime during deployments. For more information, see Updating a Service.
+- To update one of your services to a new version, adjust the Image parameter in the service template (in services/* to point to the new version of your container image. 
+- After you've updated the template, update the deployed CloudFormation stack; CloudFormation and ECS handle the rest.
+
+### Table of Contents
+1. [Create a Stack using CloudFormation](#Create-a-Stack-using-CloudFormation)  
+2. [Update a ECR Stack using CloudFormation](#Update-an-ECR-Stack-using-CloudFormation)  
+2.1 [Create a new service definition](#Create-a-new-services-definition)  
+2.2 [Modify a service.yml](#Modify-a-service.yml)  
+2.3 [Update master.yml](#Update-master.yml)
+
+### Create a Stack using CloudFormation
+
+
+### Update an ECR Stack using CloudFormation
+
+##### Create a new services definition
+1. Add user-service folder under **service**
+2. Copy antoher service.yml to user-service
+
+#### Modify a service.yml 
+
+1. Update the ContainerName and Image parameters
+
+2. Increment the ListenerRule priority number (no two services can have the same priority number - this is used to order the ALB path based routing rules).
+
+3. Change TaskDefinition field to create a task definition
+
+```
+LoadBalancers: 
+    - ContainerName: "user-service"
+        ContainerPort: 8080
+```
+
+```
+TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+        Family: user-service
+        ContainerDefinitions:
+            - Name: user-service
+                Essential: true
+                Image: <your id>.dkr.ecr.ap-southeast-1.amazonaws.com/java-spring-app 
+                Memory: 1024
+                PortMappings:
+                - ContainerPort: 8080
+
+```
+
+```
+HealthCheckPath: /workshop/users/all
+```
+
+```
+ListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+        ListenerArn: !Ref Listener
+        Priority: 3
+```
+#### Update master.yml 
+
+1. Add a new service 
+```
+    UserService:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://s3-ap-southeast-1.amazonaws.com/<your bucket>/ecs-cloudformation/services/user-service/service.yaml
+            Parameters:
+                VPC: !GetAtt VPC.Outputs.VPC
+                Cluster: !GetAtt ECS.Outputs.Cluster
+                DesiredCount: 2
+                Listener: !GetAtt ALB.Outputs.Listener 
+                Path: /workshop/users*   
+
+```
+
+```
+Outputs:
+
+    ServiceServiceUrl: 
+        Description: The URL endpoint for the product service
+        Value: !Join [ "/", [ !GetAtt ALB.Outputs.LoadBalancerUrl, "workshop/users/all" ]] 
+```
+
+
 
 <hr>
 
 ## Lab-6
+- Logging, Service Discovery and so forth
+
+### Table of Contents
+1. [Configuring Logging](#Configuring-Logging)  
+2. [Service Discovery](#Service-Discovery) 
+
+### Configuring Logging
+
+### Service Discovery
 

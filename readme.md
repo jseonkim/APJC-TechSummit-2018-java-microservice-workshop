@@ -595,6 +595,7 @@ docker ps
 - We assume there are 2 ECR repo : **user-service**, **photo-service**
 <br>
 <br>
+
 - We can create ECR stack using CloudFormation and also update it
 - ECS has the ability to perform rolling upgrades to your ECS services to minimize downtime during deployments. For more information, see Updating a Service.
 - To update one of your services to a new version, adjust the Image parameter in the service template (in services/* to point to the new version of your container image. 

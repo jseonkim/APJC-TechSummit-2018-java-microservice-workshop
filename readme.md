@@ -610,15 +610,14 @@ aws ecr describe-images --repository-name user-service-repo
 2. Pull the image using the docker pull (optional)
 
 ```
-docker pull <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service:latest
+docker pull <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service-repo:latest
 
 docker images 
 
-docker run -d -p 80:8080 --name=user-service-mysql <IMAGE_ID>
+docker run -d -p 80:8080 --name=user-service <IMAGE_ID>
 
 docker ps
 ```
-
 <hr>
 
 ## Lab-5

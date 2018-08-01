@@ -462,18 +462,52 @@ ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
 ```
 
 2. Create a docker image
-- You need to create 2 docker images for **module-03-mysql** and **module-03-ddb**
-	
+- You need to create 2 docker images for **"module-03-mysql"** and **"module-03-ddb"**
+- You need to repeat these steps for module-03-ddb with the name of "photo-service-img"
+- 8080 port for module-03-mysql
+- 8081 port for module-03-ddb
+
+For example, if you build a docker img of module-03-mysql.	
 ```	
-docker build -t user-service-mysql:latest . --build-arg JAR_FILE="./target/<YOUR_ARTIFACT_FILE>"
+cd ../module-04
+cp ../module-03-mysql/target/module-03-mysql-0.1.0.jar .
+
+docker build -t user-service-img:latest . --build-arg JAR_FILE="module-03-mysql-0.1.0.jar"
 
 ```
 
 3. Run docker in your local machine
-	
+
+Need to pass ACCESS_KEY, SECRET_KEY as environment variable when you run an applicaiton in docker.	
+
+If you want to run it as interactive mode, use following with 8080
 ```
-docker run -d -p 80:8080 --name=user-service user-service-mysql
+docker run -p 80:8080 \
+-e AWS_ACCESS_KEY_ID='<access-key>' \
+-e AWS_SECRET_ACCESS_KEY='<secret-key>' \
+-e AWS_REGION='<region>' \
+-it user-service-img bash 
 ```
+
+If you want to run it as daemon mode (module-03-mysql)
+```
+docker run -d -p 80:8080 -e AWS_ACCESS_KEY_ID='<access-key>' \
+-e AWS_SECRET_ACCESS_KEY='<secret-key>' \
+-e AWS_REGION='<region>' \
+--name=user-service user-service-img
+
+```
+
+When you run module-03-ddb docker, use 8081
+
+```
+docker run -p 80:8081 \
+-e AWS_ACCESS_KEY_ID='<access-key>' \
+-e AWS_SECRET_ACCESS_KEY='<secret-key>' \
+-e AWS_REGION='<region>' \
+-it photo-service-img bash 
+```
+
 
 4. Check running docker and stop it
 ```
@@ -530,6 +564,8 @@ docker service logs myapp_webapp-service
 
 ```
 aws ecr create-repository --repository-name user-service-repo	
+
+aws ecr create-repository --repository-name photo-service-repo
 	
 ```
 2. Check response and save a repository ARN
@@ -537,11 +573,11 @@ aws ecr create-repository --repository-name user-service-repo
 ```
 {
     "repository": {
-        "registryId": "550622896891", 
+        "registryId": "<account-id>.", 
         "repositoryName": "user-service-repo", 
         "repositoryArn": "arn:aws:ecr:ap-southeast-1:<account id>:repository/user-service-repo", 
         "createdAt": 1516947869.0, 
-        "repositoryUri": "<account id>.dkr.ecr.ap-southeast-1.amazonaws.com/user-service-repo"
+        "repositoryUri": "<account-id>.dkr.ecr.ap-southeast-1.amazonaws.com/user-service-repo"
     }
 }
 
@@ -553,15 +589,12 @@ aws ecr create-repository --repository-name user-service-repo
 aws ecr get-login --no-include-email --region ap-southeast-1 | sh
 ```
 
-4. Run above result
-
-
 #### Push your images
 
 ```
-docker tag user-service-mysql:latest  <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service:latest 
+docker tag user-service-img:latest  <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service-repo:latest 
 
-docker push  <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service:latest
+docker push  <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service-repo:latest
 ```
 
 
@@ -570,11 +603,11 @@ docker push  <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service:l
 1. You can describe the images in a repository using following command.
 
 ```
-aws ecr describe-images --repository-name user-service
+aws ecr describe-images --repository-name user-service-repo
 
 ```
 
-2. Pull the image using the docker pull
+2. Pull the image using the docker pull (optional)
 
 ```
 docker pull <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service:latest

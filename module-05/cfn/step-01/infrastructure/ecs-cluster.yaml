@@ -16,7 +16,7 @@ Parameters:
     ClusterSize:
         Description: How many ECS hosts do you want to initially deploy?
         Type: Number
-        Default: 4
+        Default: 2
 
     VPC:
         Description: Choose which VPC this ECS cluster should be deployed to
@@ -264,6 +264,7 @@ Resources:
                                 "ssm:GetDocument",
                                 "ssm:GetManifest",
                                 "ssm:GetParameters",
+                                "ssm:GetParameter",
                                 "ssm:ListAssociations",
                                 "ssm:ListInstanceAssociations",
                                 "ssm:PutInventory",
@@ -292,7 +293,9 @@ Resources:
                                 "s3:AbortMultipartUpload",
                                 "s3:ListMultipartUploadParts",
                                 "s3:ListBucket",
-                                "s3:ListBucketMultipartUploads"
+                                "s3:ListBucketMultipartUploads",
+                                "dynamodb:*",
+                                "rds:*"
                             ],
                             "Resource": "*"
                         }]

@@ -23,29 +23,30 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
-    	// create users
-      User user1 = new User();
-      user1.setName("Jeff Bar");
-      user1.setEmail("bar@gmail.com");
+        // create users
+        System.out.println("#### create users #######");
+        User user1 = new User();
+        user1.setName("Jeff Bar");
+        user1.setEmail("bar@gmail.com");
 
-      userRepository.save(user1);
+        userRepository.save(user1);
 
-      User user2 = new User();
-      user2.setName("John Bell");
-      user2.setEmail("bell@gmail.com");
+        User user2 = new User();
+        user2.setName("John Bell");
+        user2.setEmail("bell@gmail.com");
 
-      userRepository.save(user2);
+        userRepository.save(user2);
         
-      // create images
-      Integer user_id = user1.getId();
-      
-      Image img1 = new Image();
-      img1.setUser_id(user_id);
-      img1.setBucket("seon-sigapore");
-      img1.setPrefix("/outout");
-      img1.setFileName("hello.PNG");
-      
-      imageRepository.save(img1);
+        // create images
+        Integer user_id = user1.getId();
+        
+        Image img1 = new Image();
+        img1.setUser_id(user_id);
+        img1.setBucket("seon-sigapore");
+        img1.setPrefix("/outout");
+        img1.setFileName("hello.PNG");
+        
+        imageRepository.save(img1);
       
     }
 }

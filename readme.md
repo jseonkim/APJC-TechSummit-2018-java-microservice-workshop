@@ -156,6 +156,14 @@ curl 'localhost:8080/workshop/images/all'
 
 ```
 
+#### Check HTTP endpoints for Photo data with CURL 
+```
+curl 'localhost:8080/workshop/photos/all'
+
+```
+
+
+
 #### Check the web pages
 Open *localhost:8080*  
 
@@ -264,11 +272,39 @@ We are using "spring-boot-starter-actuator", please check application metrics an
 
 #### Check Application Info
 
+Http endpoints for acutuator are differnt based on spring version.
+
+If it is Spring 1.5x,
+
 ```
 curl localhost:8080/heath
 curl localhost:8080/beans
 ```
 
+If it is Spring 2.0.x
+
+```
+curl localhost:8080/actuator/info
+curl localhost:8080/actuator/health
+curl localhost:8080/actuator/metrics
+```
+
+Also you need to change application.properites according to the version of Spring.
+
+1.5x
+```
+#actuator for spring 1.5
+endpoints.actuator.enabled=true
+management.security.enabled=false
+```
+
+2.0x
+```
+#actuator for spring 2.x
+endpoints.actuator.enabled=true
+management.endpoints.web.exposure.include=*
+management.endpoints.web.exposure.exclude=env
+```
 <hr>
 
 ## Lab-3
@@ -632,33 +668,31 @@ docker ps
 
 ### Table of Contents
 1. [Create a Stack using CloudFormation](#Create-a-Stack-using-CloudFormation)  
+1.1 [Create a S3 bucket](#Create-a-S3-bucket)   
+1.2 [Change a S3 paths in files](#Change-a-S3-paths-in-files)  
+1.3 [Upload step-01 files](#Upload-step-01-files)  
+1.4 [Check the result](#Check-the-result)
+
 2. [Update a ECR Stack using CloudFormation](#Update-an-ECR-Stack-using-CloudFormation)  
-2.1 [Create a new service definition](#Create-a-new-services-definition)  
-2.2 [Modify service.yml](#Modify-service.yml)  
-2.3 [Update master.yml](#Update-master.yml)
+2.1 [Add new service](#Add-new-service)  
 
 ### Create a Stack using CloudFormation
 
+#### Create a S3 bucket
+1. Create a bucket in your region
+2. Create a folder in your bucket, for example, **<your_bucket>/ecr-cfn**
 
-### Update an ECR Stack using CloudFormation
+#### Change a S3 paths in files
+1. Change a S3 bucket path of master.yaml in step-01 and step-02
 
-##### Create a new services definition
-1. Add user-service folder under **service**
-2. Copy antoher service.yml to user-service
-
-#### Modify service.yml 
-
-1. Update the ContainerName and Image parameters
-
-2. Increment the ListenerRule priority number (no two services can have the same priority number - this is used to order the ALB path based routing rules).
-
-3. Change TaskDefinition field to create a task definition
-
+For example, 
 ```
-LoadBalancers: 
-    - ContainerName: "user-service"
-        ContainerPort: 8080
+      Properties:
+            TemplateURL: https://<s3-region>.amazonaws.com/<your-bucket>/ecs-cfn/infrastructure/vpc.yaml
 ```
+You should change all S3 paths in master.yaml
+
+2. Change a image repo URL in step-01/services/user-service/service.yaml
 
 ```
 TaskDefinition:
@@ -668,27 +702,39 @@ TaskDefinition:
         ContainerDefinitions:
             - Name: user-service
                 Essential: true
-                Image: <your id>.dkr.ecr.ap-southeast-1.amazonaws.com/java-spring-app 
-                Memory: 1024
-                PortMappings:
-                - ContainerPort: 8080
+                Image: <your imge repo url>
+                Memory: 512
+        
 
 ```
 
-```
-HealthCheckPath: /workshop/users/all
-```
+#### Upload step-01 files
+1. Uploda step-01 files onto your bucket folder.
+![Output](./imgs/05/01.png)
 
-```
-ListenerRule:
-    Type: AWS::ElasticLoadBalancingV2::ListenerRule
-    Properties:
-        ListenerArn: !Ref Listener
-        Priority: 3
-```
-#### Update master.yml 
+#### Create a Stack using CloudFormation
+1. Specify the input file URL as your master.yaml URL
+2. Specify stack name, for example, 'APJC-workshop'
 
-1. Add a new service 
+
+#### Check the result
+1. Wait for the completion of creation (it will take about 10 ~ 15mins)
+2. Check the output tab in CloudFormation
+![Output](./imgs/05/02.png)
+
+3. Check the target groups in EC2 menu.
+4. Check the CloudWatch logs.
+
+### Update an ECR Stack using CloudFormation
+
+##### Add new service
+We will add one more serice, photo-service
+1. Check a **step-02** Cloufformation files.
+2. Check the differences with **step-01**
+
+- Changes
+
+1. Added a new service in master.yml 
 ```
     UserService:
         Type: AWS::CloudFormation::Stack
@@ -711,6 +757,12 @@ Outputs:
         Value: !Join [ "/", [ !GetAtt ALB.Outputs.LoadBalancerUrl, "workshop/users/all" ]] 
 ```
 
+2. Added new service.yaml in step-02/servies/photo-service/service.yaml
+
+#### Update the stack
+1. Upload all files in step-02 into the bucket
+2. Update a stack
+3. Check the changes
 
 
 <hr>
@@ -723,6 +775,9 @@ Outputs:
 2. [Service Discovery](#Service-Discovery) 
 
 ### Configuring Logging
+We already have a Log group created in Lab-5
+Go to CloudWatch Logs and check the log group <your-created-stack>, for example, "APJC-workshop"
+
+![Output](./imgs/05/03.png)
 
 ### Service Discovery
-

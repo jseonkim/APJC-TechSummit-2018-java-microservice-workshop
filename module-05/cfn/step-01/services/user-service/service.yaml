@@ -1,6 +1,6 @@
 Description: >
-    This is an example of a long running ECS service that needs to connect to another ECS service (product-service)
-    via it's load balancer. We use environment variables to pass the URL of the product-service to this one's container(s).
+    This is an example of a long running ECS service that needs to connect to another ECS service (photo-service)
+    via it's load balancer. We use environment variables to pass the URL of the photo-service to this one's container(s).
 
 Parameters: 
 
@@ -22,7 +22,7 @@ Parameters:
         Type: Number
         Default: 3
 
-    ProductServiceUrl:
+    PhotoServiceUrl:
         Description: The URL of the Product Service (used to fetch product information)
         Type: String
 
@@ -33,7 +33,7 @@ Parameters:
     Path: 
         Description: The path to register with the Application Load Balancer
         Type: String
-        Default: /
+        Default: /workshop/users*
 
     ECSServiceAutoScalingRoleARN:
         Description: The ECS service auto scaling role ARN
@@ -50,24 +50,24 @@ Resources:
             DesiredCount: !Ref DesiredCount
             TaskDefinition: !Ref TaskDefinition
             LoadBalancers: 
-                - ContainerName: "website-service"
-                  ContainerPort: 8000
+                - ContainerName: "user-service"
+                  ContainerPort: 8080
                   TargetGroupArn: !Ref TargetGroup
 
     TaskDefinition:
         Type: AWS::ECS::TaskDefinition
         Properties:
-            Family: website-service
+            Family: user-service
             ContainerDefinitions:
-                - Name: website-service
+                - Name: user-service
                   Essential: true
-                  Image: 275396840892.dkr.ecr.us-east-1.amazonaws.com/ecs-refarch-cloudformation/website-service:1.0.0
-                  Memory: 128
+                  Image: 550622896891.dkr.ecr.ap-southeast-1.amazonaws.com/user-service-repo
+                  Memory: 512
                   Environment: 
                     - Name: PRODUCT_SERVICE_URL
-                      Value: !Ref ProductServiceUrl
+                      Value: !Ref PhotoServiceUrl
                   PortMappings:
-                    - ContainerPort: 8000
+                    - ContainerPort: 8080
                   LogConfiguration:
                     LogDriver: awslogs
                     Options:
@@ -89,10 +89,10 @@ Resources:
             Matcher: 
                 HttpCode: 200-299
             HealthCheckIntervalSeconds: 10
-            HealthCheckPath: /
+            HealthCheckPath: /workshop/users/all
             HealthCheckProtocol: HTTP
             HealthCheckTimeoutSeconds: 5
-            HealthyThresholdCount: 2
+            HealthyThresholdCount: 4
     
     ListenerRule:
         Type: AWS::ElasticLoadBalancingV2::ListenerRule
@@ -139,7 +139,10 @@ Resources:
                                     "elasticloadbalancing:DeregisterTargets",
                                     "elasticloadbalancing:DescribeTargetGroups",
                                     "elasticloadbalancing:DescribeTargetHealth",
-                                    "elasticloadbalancing:RegisterTargets"
+                                    "elasticloadbalancing:RegisterTargets",
+                                    "rds:*",
+                                    "dynamodb:*",
+                                    "ssm:*"
                                 ],
                                 "Resource": "*"
                         }]

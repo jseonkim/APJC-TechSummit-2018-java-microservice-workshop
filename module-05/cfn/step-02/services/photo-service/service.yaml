@@ -1,5 +1,5 @@
 Description: >
-    This is an example of a long running ECS service that serves a JSON API of products.
+    This is an example of a long running ECS service that serves a JSON API of photos.
 
 Parameters: 
 
@@ -23,7 +23,7 @@ Parameters:
     Path: 
         Description: The path to register with the Application Load Balancer
         Type: String
-        Default: /products
+        Default: /workshop/photos*
 
 Resources:
 
@@ -36,21 +36,21 @@ Resources:
             DesiredCount: !Ref DesiredCount
             TaskDefinition: !Ref TaskDefinition
             LoadBalancers: 
-                - ContainerName: "product-service"
-                  ContainerPort: 8001
+                - ContainerName: "photo-service"
+                  ContainerPort: 8081
                   TargetGroupArn: !Ref TargetGroup
 
     TaskDefinition:
         Type: AWS::ECS::TaskDefinition
         Properties:
-            Family: product-service
+            Family: photo-service
             ContainerDefinitions:
-                - Name: product-service
+                - Name: photo-service
                   Essential: true
-                  Image: 275396840892.dkr.ecr.us-east-1.amazonaws.com/ecs-refarch-cloudformation/product-service:1.0.0
-                  Memory: 128
+                  Image: 550622896891.dkr.ecr.ap-southeast-1.amazonaws.com/photo-service-repo
+                  Memory: 512
                   PortMappings:
-                    - ContainerPort: 8001
+                    - ContainerPort: 8081
                   LogConfiguration:
                     LogDriver: awslogs
                     Options:
@@ -72,7 +72,7 @@ Resources:
             Matcher: 
                 HttpCode: 200-299
             HealthCheckIntervalSeconds: 10
-            HealthCheckPath: /products
+            HealthCheckPath: /workshop/photos/all
             HealthCheckProtocol: HTTP
             HealthCheckTimeoutSeconds: 5
             HealthyThresholdCount: 2
@@ -122,7 +122,10 @@ Resources:
                                     "elasticloadbalancing:DeregisterTargets",
                                     "elasticloadbalancing:DescribeTargetGroups",
                                     "elasticloadbalancing:DescribeTargetHealth",
-                                    "elasticloadbalancing:RegisterTargets"
+                                    "elasticloadbalancing:RegisterTargets",
+                                    "rds:*",
+                                    "dynamodb:*",
+                                    "ssm:*"
                                 ],
                                 "Resource": "*"
                         }]

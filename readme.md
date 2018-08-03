@@ -66,7 +66,6 @@ Eclipse IDE is optional as your dev IDE for studying this workshop but not manda
 
 ## Use an AMI
 
-
 # Labs : Migration from Monolithic to Microservice
 
 ## Workshop Steps
@@ -77,6 +76,8 @@ Eclipse IDE is optional as your dev IDE for studying this workshop but not manda
 4. Lab-4 : Create a docker image and push it to ECR
 5. Lab-5 : Create a ECR
 6. Lab-6 : Logging and Service Discovery (optional)
+
+### Use Virginia-region (us-east-1)
 
 <hr>
 
@@ -611,9 +612,9 @@ aws ecr create-repository --repository-name photo-service-repo
     "repository": {
         "registryId": "<account-id>.", 
         "repositoryName": "user-service-repo", 
-        "repositoryArn": "arn:aws:ecr:ap-southeast-1:<account id>:repository/user-service-repo", 
+        "repositoryArn": "arn:aws:ecr:us-east-1:<account id>:repository/user-service-repo", 
         "createdAt": 1516947869.0, 
-        "repositoryUri": "<account-id>.dkr.ecr.ap-southeast-1.amazonaws.com/user-service-repo"
+        "repositoryUri": "<account-id>.dkr.ecr.us-east-1.amazonaws.com/user-service-repo"
     }
 }
 
@@ -622,7 +623,7 @@ aws ecr create-repository --repository-name photo-service-repo
 3. Get Authentication
 
 ```
-aws ecr get-login --no-include-email --region ap-southeast-1 | sh
+aws ecr get-login --no-include-email --region us-east-1 | sh
 ```
 
 #### Push your images
@@ -739,7 +740,7 @@ We will add one more serice, photo-service
     UserService:
         Type: AWS::CloudFormation::Stack
         Properties:
-            TemplateURL: https://s3-ap-southeast-1.amazonaws.com/<your bucket>/ecs-cloudformation/services/user-service/service.yaml
+            TemplateURL: https://s3-us-east-1.amazonaws.com/<your bucket>/ecs-cloudformation/services/user-service/service.yaml
             Parameters:
                 VPC: !GetAtt VPC.Outputs.VPC
                 Cluster: !GetAtt ECS.Outputs.Cluster
@@ -781,3 +782,5 @@ Go to CloudWatch Logs and check the log group <your-created-stack>, for example,
 ![Output](./imgs/05/03.png)
 
 ### Service Discovery
+- For serice discovery, **us-east-1** region is recommended.
+

@@ -65,7 +65,7 @@ Resources:
             Parameters:
                 VPC: !GetAtt VPC.Outputs.VPC
                 Cluster: !GetAtt ECS.Outputs.Cluster
-                DesiredCount: 2
+                DesiredCount: 1
                 PhotoServiceUrl: !Join [ "/", [ !GetAtt ALB.Outputs.LoadBalancerUrl, "photo" ]]
                 Listener: !GetAtt ALB.Outputs.Listener 
                 Path: /workshop/users*

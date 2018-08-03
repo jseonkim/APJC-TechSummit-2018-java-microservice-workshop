@@ -14,7 +14,7 @@ Parameters:
     DesiredCount: 
         Description: How many instances of this task should we run across our cluster?
         Type: Number
-        Default: 2
+        Default: 1
 
     Listener:
         Description: The Application Load Balancer listener to register with
@@ -48,7 +48,7 @@ Resources:
                 - Name: photo-service
                   Essential: true
                   Image: 550622896891.dkr.ecr.ap-southeast-1.amazonaws.com/photo-service-repo
-                  Memory: 512
+                  Memory: 1024
                   PortMappings:
                     - ContainerPort: 8081
                   LogConfiguration:
@@ -71,7 +71,7 @@ Resources:
             Protocol: HTTP
             Matcher: 
                 HttpCode: 200-299
-            HealthCheckIntervalSeconds: 10
+            HealthCheckIntervalSeconds: 20
             HealthCheckPath: /workshop/photos/all
             HealthCheckProtocol: HTTP
             HealthCheckTimeoutSeconds: 5

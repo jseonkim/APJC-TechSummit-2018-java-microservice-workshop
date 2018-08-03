@@ -15,12 +15,12 @@ Parameters:
     DesiredCount: 
         Description: How many instances of this task should we run across our cluster?
         Type: Number
-        Default: 2
+        Default: 1
 
     MaxCount:
         Description: Maximum number of instances of this task we can run across our cluster
         Type: Number
-        Default: 3
+        Default: 2
 
     PhotoServiceUrl:
         Description: The URL of the Product Service (used to fetch product information)
@@ -62,7 +62,7 @@ Resources:
                 - Name: user-service
                   Essential: true
                   Image: 550622896891.dkr.ecr.ap-southeast-1.amazonaws.com/user-service-repo
-                  Memory: 512
+                  Memory: 1024
                   Environment: 
                     - Name: PRODUCT_SERVICE_URL
                       Value: !Ref PhotoServiceUrl
@@ -88,11 +88,11 @@ Resources:
             Protocol: HTTP
             Matcher: 
                 HttpCode: 200-299
-            HealthCheckIntervalSeconds: 10
+            HealthCheckIntervalSeconds: 20
             HealthCheckPath: /workshop/users/all
             HealthCheckProtocol: HTTP
             HealthCheckTimeoutSeconds: 5
-            HealthyThresholdCount: 4
+            HealthyThresholdCount: 2
     
     ListenerRule:
         Type: AWS::ElasticLoadBalancingV2::ListenerRule

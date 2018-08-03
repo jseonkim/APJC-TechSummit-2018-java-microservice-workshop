@@ -71,7 +71,7 @@ public class DynamoDBConfig {
 		}
 
 		CreateTableRequest ctr = mapper.generateCreateTableRequest(entityClass, config);
-		ProvisionedThroughput pt = new ProvisionedThroughput(1L, 1L);
+		ProvisionedThroughput pt = new ProvisionedThroughput(5L, 2L);
 		ctr.withProvisionedThroughput(pt);
 		List<GlobalSecondaryIndex> gsi = ctr.getGlobalSecondaryIndexes();
 		if (gsi != null) {

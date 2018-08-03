@@ -784,3 +784,5 @@ Go to CloudWatch Logs and check the log group <your-created-stack>, for example,
 ### Service Discovery
 - For serice discovery, **us-east-1** region is recommended.
 
+reference : https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-service-discovery.html
+

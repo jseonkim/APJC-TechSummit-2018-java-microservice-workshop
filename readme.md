@@ -673,9 +673,9 @@ docker ps
 1.2 [Change a S3 paths in files](#Change-a-S3-paths-in-files)  
 1.3 [Upload step-01 files](#Upload-step-01-files)  
 1.4 [Check the result](#Check-the-result)
-
 2. [Update a ECR Stack using CloudFormation](#Update-an-ECR-Stack-using-CloudFormation)  
 2.1 [Add new service](#Add-new-service)  
+ 3. [Add New service (optional)](#Add-New-service-(optional))
 
 ### Create a Stack using CloudFormation
 
@@ -765,6 +765,12 @@ Outputs:
 2. Update a stack
 3. Check the changes
 
+### Add New service (optional)
+- If you have enough time, then proceed this optional tasks
+- Use UserService Task
+- Create a new service with TargetGroup "workshop/images*"
+- Modify CFN templates, add new service, change it, and modify master.yaml
+- Or you can do Section 2 manually without using **step-02** codes.
 
 <hr>
 

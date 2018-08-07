@@ -1,0 +1,20 @@
+{
+    "cluster": "APJC-tech-2018-migration",
+    "serviceName": "photo-fargate-service",
+    "taskDefinition": "photo-fargate-task-def",
+    "serviceRegistries": [
+       {
+          "registryArn": "arn:aws:servicediscovery:us-east-1:<id>:service/srv-pdd65idsnhxxxxx"
+       }
+    ],
+    "launchType": "FARGATE",
+    "platformVersion": "1.1.0",
+    "networkConfiguration": {
+       "awsvpcConfiguration": {
+          "assignPublicIp": "ENABLED",
+          "securityGroups": [ "sg-5277xxx" ],
+          "subnets": [ "subnet-28575xxxx" ]
+       }
+    },
+    "desiredCount": 1
+}

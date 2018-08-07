@@ -16,7 +16,8 @@
 3.3 [Lab-2](#Lab-2)  
 3.4 [Lab-3](#Lab-3)  
 3.5 [Lab-4](#Lab-4)  
-3.6 [Lab-5](#Lab-5)
+3.6 [Lab-5](#Lab-5)  
+3.7 [Lab-6 (Optional)](#Lab-6-(Optional))
 
 
 # Overview of This Workshop
@@ -60,6 +61,8 @@ Eclipse IDE is optional as your dev IDE for studying this workshop but not manda
 6. MySql Client 
 
 **Optional**  
+- AWS ECR CLI (optional) : https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_CLI_installation.html
+
 - Eclipse Oxygen 3 or above
 - AWS plugin for Eclipse  : https://docs.aws.amazon.com/toolkit-for-eclipse/v1/user-guide/setup-install.html
 
@@ -774,12 +777,21 @@ Outputs:
 
 <hr>
 
-## Lab-6
+## Lab-6 (Optional)
+- If you have enougth time, please try this lab.
 - Logging, Service Discovery and so forth
+- In this lab, you will use AWS ECR CLI, install it: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_CLI_installation.html
+
 
 ### Table of Contents
 1. [Configuring Logging](#Configuring-Logging)  
-2. [Service Discovery](#Service-Discovery) 
+2. [Service Discovery](#Service-Discovery)  
+2.1 [Create a service discovery](#Create-a-service-discovery)  
+2.2 [Create a ECR](#Create-a-ECR)  
+2.3 [Check Input files](#Check-Input-files)  
+2.4 [Resolve Errors](#Resolve-Errors)
+3. [Verify the service discovery](#Verify-the-service-discovery)
+4. [Clean Up](#Clean-Up)
 
 ### Configuring Logging
 We already have a Log group created in Lab-5
@@ -792,3 +804,204 @@ Go to CloudWatch Logs and check the log group <your-created-stack>, for example,
 
 reference : https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-service-discovery.html
 
+#### Create a service discovery
+
+1. Create a private service discovery namespace named tutorial within an existing VPC(default VPC in your region)
+
+- dns-name : specify your name (eg: APJC-migration-workshop)
+- vpc : the vpc you want to use for ECS fargate
+- region : us-east-1, us-east-2 (regions that Fargate available)
+
+```
+aws servicediscovery create-private-dns-namespace --name APJC-migration-workshop --vpc vpc-07aaaaaa --region us-east-1
+```
+Output :
+```
+{
+    "OperationId": "vfwy4cf7ghe43zxxxxxxxxxxx-jkhsa0fm"
+}
+```
+
+2. Using the OperationId from the previous output, verify that the private namespace was created successfully. Copy the namespace ID as it is used in subsequent commands. 
+
+```
+aws servicediscovery get-operation --operation-id vfwy4cf7ghe43zxxxxxxxxxxx-jkhsa0fm
+```
+
+Output:
+```
+{
+    "Operation": {
+        "Id": "vfwy4cf7ghe43zxxxxxxxxxxx-jkhsa0fm",
+        "Type": "CREATE_NAMESPACE",
+        "Status": "SUCCESS",
+        "CreateDate": 15335xxxx.906,
+        "UpdateDate": 15335xxxx.7,
+        "Targets": {
+            "NAMESPACE": "ns-myjesubutlfxxxxx"
+        }
+    }
+}
+```
+
+3. Using the NAMESPACE ID from the previous output, create a service discovery service named myapplication. Copy the service discovery service ID as it is used in subsequent commands. 
+
+```
+aws servicediscovery create-service --name APJC-my-application --dns-config 'NamespaceId="ns-myjesubutlfxxxxx",DnsRecords=[{Type="A",TTL="300"}]' --health-check-custom-config FailureThreshold=1 --region us-east-1
+```
+Output:
+```
+{
+    "Service": {
+        "Id": "srv-pdd65idsnhjxxxx",
+        "Arn": "arn:aws:servicediscovery:us-east-1:<user-id>:service/srv-pdd65idsnhjxxxx",
+        "Name": "APJC-my-application",
+        "DnsConfig": {
+            "NamespaceId": "ns-myjesubutlfxxxxx",
+            "RoutingPolicy": "MULTIVALUE",
+            "DnsRecords": [
+                {
+                    "Type": "A",
+                    "TTL": 300
+                }
+            ]
+        },
+        "HealthCheckCustomConfig": {
+            "FailureThreshold": 1
+        },
+        "CreatorRequestId": "ece2037c-2e6e-4d7d-8a24-xxxxxxxxxxx"
+    }
+}
+```
+
+#### Create a ECR
+
+1. Create an ECS cluster named **APJC-tech-2018-migration** to use. 
+```
+aws ecs create-cluster --cluster-name APJC-tech-2018-migration --region us-east-1
+```
+
+Output:
+
+```
+{
+    "cluster": {
+        "clusterArn": "arn:aws:ecs:us-east-1:<user-id>:cluster/APJC-tech-2018-migration",
+        "clusterName": "APJC-tech-2018-migration",
+        "status": "ACTIVE",
+        "registeredContainerInstancesCount": 0,
+        "runningTasksCount": 0,
+        "pendingTasksCount": 0,
+        "activeServicesCount": 0,
+        "statistics": []
+    }
+}
+```
+
+2. Register a Task Definition
+
+```
+aws ecs register-task-definition --cli-input-json file://photo-fargate-task.json --region us-east-1
+```
+
+3. Create a Service
+```
+aws ecs create-service --cli-input-json file://photo-fargate-service.json --region us-east-2
+```
+#### Check Input files
+1. **photo-fargate-task.json
+- For fargate, should use "networkMode": "awsvpc"
+- should be "containerPort": 80,
+
+2. **photo-fargate-service.json**
+- Must have a Subnet and SecurityGroup in same VPC you created in previous step
+
+
+#### Resolve Errors
+
+1. If you get such like a error message
+
+```
+An error occurred (ClientException) when calling the RegisterTaskDefinition operation: Fargate requires task definition to have execution role ARN to support log driver awslogs.
+```
+**Solution** : It means that needs a Role ARN, create a role ARN for fargate (like EC2 Instannce Role for EC2 cluster)
+
+
+2. If you get such like a error message
+```
+An error occurred (ClientException) when calling the RegisterTaskDefinition operation: No Fargate configuration exists for given values.
+
+```
+**Solution**It might CPU or Memory size is not proper/too big, change Cpu or Memory size
+
+
+### Verify the service discovery
+
+1. List instances
+```
+aws servicediscovery list-instances --service-id srv-pdd65idsnhjxxxx --region us-east-1
+```
+
+2. Get information about the namespace
+
+```
+
+aws servicediscovery get-namespace --id ns-myjesubutlfxxxxx --region us-east-1
+```
+Output:
+```
+{
+    "Namespace": {
+        "Id": "ns-myjesubutlfxwgij",
+        "Arn": "arn:aws:servicediscovery:us-east-1:<user-id>:namespace/ns-myjesubutlfxxxxx",
+        "Name": "APJC-migration-workshop",
+        "Type": "DNS_PRIVATE",
+        "Properties": {
+            "DnsProperties": {
+                "HostedZoneId": "Z49HTDOV4DS44"
+            }
+        },
+        "CreateDate": 1533530186.689,
+        "CreatorRequestId": "51be3806-b478-4ba9-8258-15edc8a4f451"
+    }
+}
+```
+
+3. Using the Route 53 hosted zone ID(**HostedZoneId**), get the resource record set for the hosted zone
+```
+aws route53 list-resource-record-sets --hosted-zone-id Z49HTDOV4DS44 --region us-east-2
+```
+
+### Clean Up
+1. Deregister the service discovery service instances.
+```
+aws servicediscovery deregister-instance --service-id srv-pdd65idsnhjxxxx --instance-id 16becc26-8558-4af1-9fbd-xxxxxxxx --region us-east-1
+```
+
+2. Delete the service discovery service.
+
+```
+aws servicediscovery delete-service --id srv-pdd65idsnhjxxxx --region us-east-1
+```
+
+3. Delete the service discovery namespace.
+```
+aws servicediscovery delete-namespace --id ns-myjesubutlfxxxxx --region us-east-1
+```
+
+4. Update the Amazon ECS service so the desired count is 0, which allows you to delete it.
+
+```
+aws ecs update-service --cluster APJC-tech-2018-migration --service ecs-service-discovery --desired-count 0 --force-new-deployment --region us-east-1
+```
+
+5. Delete the Amazon ECS service.
+
+```
+aws ecs delete-service --cluster APJC-tech-2018-migration --service ecs-service-discovery --region us-east-1
+```
+
+6. Delete the Amazon ECS cluster.
+```
+aws ecs delete-cluster --cluster APJC-tech-2018-migration  --region us-east-1
+```

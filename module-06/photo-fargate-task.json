@@ -1,0 +1,32 @@
+{
+    "family": "photo-fargate-task-def",
+        "networkMode": "awsvpc",
+        "containerDefinitions": [
+            {
+                "name": "photo-service-fargate",
+                "image": "<user-id>.dkr.ecr.ap-southeast-1.amazonaws.com/photo-service-repo",                
+                "portMappings": [
+                    {
+                        "containerPort": 80,
+                        "hostPort": 80,
+                        "protocol": "tcp"
+                    }
+                ],
+                "essential": true,
+                "logConfiguration": {
+                    "logDriver": "awslogs",
+                    "options": {
+                      "awslogs-group": "APJC-2018-workshop-PhotoService",
+                      "awslogs-region": "us-east-1",
+                      "awslogs-stream-prefix": "ecs"
+                    }               
+                }
+            }    
+        ],
+        "executionRoleArn": "arn:aws:iam::<user-id>.:role/ECSInstanceRole2",
+        "requiresCompatibilities": [
+            "FARGATE"
+        ],
+        "cpu": "256",
+        "memory": "1024"
+}

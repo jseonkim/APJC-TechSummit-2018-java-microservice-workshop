@@ -61,10 +61,9 @@ Eclipse IDE is optional as your dev IDE for studying this workshop but not manda
 6. MySql Client 
 
 **Optional**  
-- AWS ECR CLI (optional) : https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_CLI_installation.html
-
 - Eclipse Oxygen 3 or above
 - AWS plugin for Eclipse  : https://docs.aws.amazon.com/toolkit-for-eclipse/v1/user-guide/setup-install.html
+- AWS ECR CLI (optional) : https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_CLI_installation.html
 
 
 ## Use an AMI
@@ -800,9 +799,7 @@ Go to CloudWatch Logs and check the log group <your-created-stack>, for example,
 ![Output](./imgs/05/03.png)
 
 ### Service Discovery
-- For serice discovery, **us-east-1** region is recommended.
-
-reference : https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-service-discovery.html
+- For service discovery, **us-east-1** region is recommended.
 
 #### Create a service discovery
 

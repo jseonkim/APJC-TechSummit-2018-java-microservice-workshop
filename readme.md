@@ -70,21 +70,30 @@ Eclipse IDE is optional as your dev IDE for studying this workshop but not manda
 
 # Labs : Migration from Monolithic to Microservice
 
+## Regions
+### Recommended Region 
+- **ap-southeast-1** (singapore) for **Lab-1 ~ Lab-5**
+- **us-east-1** (virginia) for **Lab-6**
+
 ## Workshop Steps
 
-1. Lab-1 : Create a HTTP endpotins 
+1. Lab-1 : Create a HTTP endpoints 
 2. Lab-2 : Externalize Configuration / Expose Application Metrics and information
 3. Lab-3 : Splitting projects 
 4. Lab-4 : Create a docker image and push it to ECR
 5. Lab-5 : Create a ECR
 6. Lab-6 : Logging and Service Discovery (optional)
 
-### Use Virginia-region (us-east-1)
+### Use Virginia-region (<your-region>)
 
 <hr>
 
 ## Lab-1
-- Create a HTTP endpotins 
+
+- This is first lab to create a Java Spring application.
+- This is monolithic Restful application. It uses Spring Data and exposing Restful HTTP endpoints.
+
+Step of migration : Create a HTTP endpotins 
 
 ### Table of Contents
 1. [First application](#First-application)  
@@ -101,6 +110,8 @@ Eclipse IDE is optional as your dev IDE for studying this workshop but not manda
 
 ### First application
 
+- We recommend using console not IDE.
+
 #### Download codes
 
 ```
@@ -115,7 +126,7 @@ git clone https://github.com/aws-asean-builders/APJC-TechSummit-2018-java-micros
 cd <work_space>/module-01
 ```
 
-2. Compile and package without unit testing(recommended)
+2. Compile and package without unit testing(Skip testing)
 
 ```
 mvn compile package -Dmaven.test.skip=true
@@ -173,47 +184,10 @@ Open *localhost:8080*
 Open *localhost:8080/users/add*, *localhost:8080/users*
 
 
-### Change Properties(optional)
-#### Change H2 password
-**If you have enough time, Procced this section, if not, skip this section.**
-
-Currently we are using H2 database. If you want to change this database to MySQL in local then, please see application.properties.
-
-1. Connect H2 console (http://localhost:8080/h2)
-2. Specify JDBC URL "jdbc:h2:file:~/WorkshopDB"
-3. User Name : **sa**
-4. Password : *none*
-
-![H2 database](./imgs/01/01.png)
-
-5. Change password to "12345678"
-
-```
-ALTER USER sa SET PASSWORD '12345678';
-```
-
-#### Change application.properties
-
-Please see application.properties in **moudle-01/src/main/resources**
-
-1. Specify password value
-
-``` 
-spring.datasource.password=12345678
-```
-2. Re-launch application
-
-```
-mvn compile package -Dmaven.test.skip=true
-
-java -jar target/module-01-0.1.0.jar
-
-```
-
 <hr>
 
 ## Lab-2
-
+- We are going to add several features in the application. Module-02  already has following features
 - Externalize Configuration / Expose Application Metrics and information
 
 ### Table of Contents
@@ -234,13 +208,13 @@ java -jar target/module-02-0.1.0.jar
 ```
  
 - **You definitely got error above, it is because you don't have Parameter Stores**
-- You need to create this following step 2
+- You need to perform following task.
 
 1. Configure Your Parameter Store
-2. Check your EC2 roles (If you have errors after creating parameters in Parameter Store, then check it)
+2. If you are using a developing AMI, check your EC2 role.
  
-### Externalize Configuration 
 
+### Externalize Configuration 
 
 #### Configure AWS CLI(Optional)
 If you didn't configure AWS CLI, then install or uprate your AWS CLI 
@@ -255,7 +229,7 @@ If you didn't configure AWS CLI, then install or uprate your AWS CLI
 
 #### Configure ParameterStore in System Manager 
 - AWS Systems Manager Parameter Store provides secure, hierarchical storage for configuration data management and secrets management. You can store data such as passwords, database strings, and license codes as parameter values.
-Complete the following tasks to configure application parameters for ParameterStore (select your region, for example, us-east-1, ap-southeast-1 and so forth)
+Complete the following tasks to configure application parameters for ParameterStore (select your region, for example, <your-region>, ap-southeast-1 and so forth)
 
 
 1. Open the System Manager Cosole and go to Parameter Store
@@ -268,19 +242,30 @@ Complete the following tasks to configure application parameters for ParameterSt
 
 #### Run your application again
 
-Check your EC2 role, if you have errors after creating parameters in Parameter Store.
+Check your Roles in Credential(or EC2 role, if you are using AMI), if you have errors after creating parameters in Parameter Store.
 
 ### Expose Application Metrics and Information
 We are using "spring-boot-starter-actuator", please check application metrics and information using following command
 
 #### Check Application Info
+Actuator endpoints let you monitor and interact with your application. Spring Boot includes a number of built-in endpoints and lets you add your own. For example, the health endpoint provides basic application health information.
+For example,
+
+- beans : Displays a complete list of all the Spring beans in your application.
+- conditions : Shows the conditions that were evaluated on configuration and auto-configuration classes and the reasons why they did or did not match.
+- info : Displays arbitrary application info.
+
+Each individual endpoint can be enabled or disabled. 
+If you need more information, refer this : https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html
+
 
 Http endpoints for acutuator are differnt based on spring version.
+
 
 If it is Spring 1.5x,
 
 ```
-curl localhost:8080/heath
+curl localhost:8080/health
 curl localhost:8080/beans
 ```
 
@@ -317,7 +302,7 @@ management.endpoints.web.exposure.exclude=env
 1. [Run your appplications](#Run-your-appplications)  
 1.1 [Compile and run 2 applications](#Compile-and-run-2-applications)   
 1.2 [Test your HTTP endpoints with CURL](#Test-your-HTTP-endpoints-with-CURL)
-2. [Create a Mysql DB](#Create-a-Mysql-DB)  
+2. [Migrate to Mysql DB](#Migrate-to-Mysql-DB)  
 2.1 [Create an Aurora MySQL instance](#Create-an-Aurora-MySQL-instance)  
 2.2 [Install MySQL Client and Create a new user](#Install-MySQL-Client-and-Create-a-new-user)  
 2.3 [Configure ParameterStore in System Manager](#Configure-ParameterStore-in-System-Manager)
@@ -346,14 +331,16 @@ java -jar target/module-03-mysql-0.1.0.jar
 #### Test your HTTP endpoints with CURL
 
 ```
+# test user
+curl 'localhost:8080/workshop/users/all'
 
 ```
 
-### Create a Mysql DB
+### Migrate to Mysql DB
 
 #### Create an Aurora MySQL instance
 
-1. Open the Amazon RDS console : https://console.aws.amazon.com/rds/home?region=us-east-1#
+1. Open the Amazon RDS console : https://console.aws.amazon.com/rds/home?region=<your-region>#
 2. Select Aurora for MySQL 5.7 Database engine and select the 
 3. Create a DB instance configuring database name, username, password.
 4. Remember your master username and password to perform next step
@@ -375,7 +362,7 @@ Name your Aurora database as TSA-Workshop, and keep the rest of the values as de
 
 6. Wait until completing the creation of Aurora for MySQL 
 
-Endpoint looks like this - "tsa-workshop.ctdltt3xxxx.us-east-1.rds.amazonaws.com"
+Endpoint looks like this - "tsa-workshop.ctdltt3xxxx.<your-region>.rds.amazonaws.com"
 	
 7. Check Endpoint and Security Group
 	
@@ -412,7 +399,7 @@ show tables;
 #### Configure ParameterStore in System Manager 
 
 AWS Systems Manager Parameter Store provides secure, hierarchical storage for configuration data management and secrets management. You can store data such as passwords, database strings, and license codes as parameter values.
-Complete the following tasks to configure application parameters for ParameterStore (default region is us-east-1)
+Complete the following tasks to configure application parameters for ParameterStore (default region is <your-region>)
 
 1. Open the Amazon EC2 console at https://console.aws.amazon.com/ec2/
 2. Change values in ParameterStore for database URL, database username and password
@@ -440,22 +427,24 @@ select * from User;
 
 ```
 
+#### 2.4 Test your applicaiton
+```
+curl localhost:8080/workshop/users/all
+```
+
 ### Create a Dynamo Database table
 
 #### Create a Table (optional)
 - Application (module-03-ddb) will create PhotoInfo table automatically.
 
-1. Create a "PhotoInfo" table
-2. Specify "id" as a primary partition key
+- Check PhotoInfo table create by module-03-ddb application
 
-![DDB](./imgs/03/04.png)
 
 #### Run and check
 Run Module-03-ddb and check it again
 
 ```
 curl localhost:8080/workshop/photos/all
-
 ```
 
 <hr>
@@ -471,7 +460,7 @@ curl localhost:8080/workshop/photos/all
 2. [ECR](#ECR)  
 2.1 [Create an ECR repository](#Create-an-ECR-repository)  
 2.2 [Push your images](#Push-your-images)  
-2.3 [Check the pushed image](#Check-the-pushed-image)
+2.3 [Verify the pushed image](#Verify-the-pushed-image)
 
 
 ### Building docker
@@ -479,7 +468,9 @@ curl localhost:8080/workshop/photos/all
 Reference : 
 https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html#docker-basics-create-image
 
-#### Install docker tools (optional)
+#### Install docker tools 
+- If you are using labtop then must install docker tools.
+- Refer this page : https://docs.docker.com/docker-for-mac/install/
 
 If you are able to use YUM, then use following command
 ```
@@ -506,7 +497,10 @@ ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
 - 8080 port for module-03-mysql
 - 8081 port for module-03-ddb
 
-For example, if you build a docker img of module-03-mysql.	
+If you want to build a docker image for the application, then copy JAR file into your working directory and run following commands.
+
+For example, if you build a docker img of module-03-mysql. the copy module-03-mysql-0.1.0.jar into **module-04** directory.
+
 ```	
 cd ../module-04
 cp ../module-03-mysql/target/module-03-mysql-0.1.0.jar .
@@ -528,7 +522,7 @@ docker run -p 80:8080 \
 -it user-service-img bash 
 ```
 
-If you want to run it as daemon mode (module-03-mysql)
+If you want to run it as daemon mode (for **module-03-mysql**)
 ```
 docker run -d -p 80:8080 -e AWS_ACCESS_KEY_ID='<access-key>' \
 -e AWS_SECRET_ACCESS_KEY='<secret-key>' \
@@ -536,6 +530,8 @@ docker run -d -p 80:8080 -e AWS_ACCESS_KEY_ID='<access-key>' \
 --name=user-service user-service-img
 
 ```
+
+4. Repeat about steps for **module-03-ddb docker**.
 
 When you run module-03-ddb docker, use 8081
 
@@ -568,36 +564,13 @@ docker rm $(docker ps -a -q)
 docker rmi $(docker images -q)
 ```
 
-#### More commands for Debug (Optional)
-
-1. List stack:
-
-```
-docker stack ls
-```
-
-2. List services in the stack:
-
-```
-docker stack services myapp
-```
-
-3. List containers:
-
-```
-docker container ls -f name=myapp*
-```
-
-4. Get logs for all the containers in the webapp service:
-
-```
-docker service logs myapp_webapp-service
-```
-
 
 ### ECR
 
 #### Create an ECR repository
+
+- Specify your ECR repository name, for example **user-service-repo** and **photo-service-repo**
+- This repo will be used in Lab-6, must remember this repo names.
 
 1. Run a following AWS CLI command
 
@@ -614,9 +587,9 @@ aws ecr create-repository --repository-name photo-service-repo
     "repository": {
         "registryId": "<account-id>.", 
         "repositoryName": "user-service-repo", 
-        "repositoryArn": "arn:aws:ecr:us-east-1:<account id>:repository/user-service-repo", 
+        "repositoryArn": "arn:aws:ecr:<your-region>:<account id>:repository/user-service-repo", 
         "createdAt": 1516947869.0, 
-        "repositoryUri": "<account-id>.dkr.ecr.us-east-1.amazonaws.com/user-service-repo"
+        "repositoryUri": "<account-id>.dkr.ecr.<your-region>.amazonaws.com/user-service-repo"
     }
 }
 
@@ -625,7 +598,7 @@ aws ecr create-repository --repository-name photo-service-repo
 3. Get Authentication
 
 ```
-aws ecr get-login --no-include-email --region us-east-1 | sh
+aws ecr get-login --no-include-email --region <your-region> | sh
 ```
 
 #### Push your images
@@ -637,7 +610,7 @@ docker push  <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service-r
 ```
 
 
-#### Check the pushed image
+#### Verify the pushed image
 
 1. You can describe the images in a repository using following command.
 
@@ -646,21 +619,15 @@ aws ecr describe-images --repository-name user-service-repo
 
 ```
 
-2. Pull the image using the docker pull (optional)
+### Repeat for photo-service
+1. Repeat above steps for photo-service
 
-```
-docker pull <aws_account_id>.dkr.ecr.<your_region>.amazonaws.com/user-service-repo:latest
 
-docker images 
-
-docker run -d -p 80:8080 --name=user-service <IMAGE_ID>
-
-docker ps
-```
 <hr>
 
 ## Lab-5
-- Create a ECR
+- Create a ECS
+
 - We assume there are 2 ECR repo : **user-service**, **photo-service**
 <br>
 
@@ -742,7 +709,7 @@ We will add one more serice, photo-service
     UserService:
         Type: AWS::CloudFormation::Stack
         Properties:
-            TemplateURL: https://s3-us-east-1.amazonaws.com/<your bucket>/ecs-cloudformation/services/user-service/service.yaml
+            TemplateURL: https://s3-<your-region>.amazonaws.com/<your bucket>/ecs-cloudformation/services/user-service/service.yaml
             Parameters:
                 VPC: !GetAtt VPC.Outputs.VPC
                 Cluster: !GetAtt ECS.Outputs.Cluster
@@ -799,7 +766,7 @@ Go to CloudWatch Logs and check the log group <your-created-stack>, for example,
 ![Output](./imgs/05/03.png)
 
 ### Service Discovery
-- For service discovery, **us-east-1** region is recommended.
+- For service discovery, **<your-region>** region is recommended.
 
 #### Create a service discovery
 
@@ -807,10 +774,10 @@ Go to CloudWatch Logs and check the log group <your-created-stack>, for example,
 
 - dns-name : specify your name (eg: APJC-migration-workshop)
 - vpc : the vpc you want to use for ECS fargate
-- region : us-east-1, us-east-2 (regions that Fargate available)
+- region : <your-region>, us-east-2 (regions that Fargate available)
 
 ```
-aws servicediscovery create-private-dns-namespace --name APJC-migration-workshop --vpc vpc-07aaaaaa --region us-east-1
+aws servicediscovery create-private-dns-namespace --name APJC-migration-workshop --vpc vpc-07aaaaaa --region <your-region>
 ```
 Output :
 ```
@@ -844,14 +811,14 @@ Output:
 3. Using the NAMESPACE ID from the previous output, create a service discovery service named myapplication. Copy the service discovery service ID as it is used in subsequent commands. 
 
 ```
-aws servicediscovery create-service --name APJC-my-application --dns-config 'NamespaceId="ns-myjesubutlfxxxxx",DnsRecords=[{Type="A",TTL="300"}]' --health-check-custom-config FailureThreshold=1 --region us-east-1
+aws servicediscovery create-service --name APJC-my-application --dns-config 'NamespaceId="ns-myjesubutlfxxxxx",DnsRecords=[{Type="A",TTL="300"}]' --health-check-custom-config FailureThreshold=1 --region <your-region>
 ```
 Output:
 ```
 {
     "Service": {
         "Id": "srv-pdd65idsnhjxxxx",
-        "Arn": "arn:aws:servicediscovery:us-east-1:<user-id>:service/srv-pdd65idsnhjxxxx",
+        "Arn": "arn:aws:servicediscovery:<your-region>:<user-id>:service/srv-pdd65idsnhjxxxx",
         "Name": "APJC-my-application",
         "DnsConfig": {
             "NamespaceId": "ns-myjesubutlfxxxxx",
@@ -875,7 +842,7 @@ Output:
 
 1. Create an ECS cluster named **APJC-tech-2018-migration** to use. 
 ```
-aws ecs create-cluster --cluster-name APJC-tech-2018-migration --region us-east-1
+aws ecs create-cluster --cluster-name APJC-tech-2018-migration --region <your-region>
 ```
 
 Output:
@@ -883,7 +850,7 @@ Output:
 ```
 {
     "cluster": {
-        "clusterArn": "arn:aws:ecs:us-east-1:<user-id>:cluster/APJC-tech-2018-migration",
+        "clusterArn": "arn:aws:ecs:<your-region>:<user-id>:cluster/APJC-tech-2018-migration",
         "clusterName": "APJC-tech-2018-migration",
         "status": "ACTIVE",
         "registeredContainerInstancesCount": 0,
@@ -898,7 +865,7 @@ Output:
 2. Register a Task Definition
 
 ```
-aws ecs register-task-definition --cli-input-json file://photo-fargate-task.json --region us-east-1
+aws ecs register-task-definition --cli-input-json file://photo-fargate-task.json --region <your-region>
 ```
 
 3. Create a Service
@@ -936,21 +903,21 @@ An error occurred (ClientException) when calling the RegisterTaskDefinition oper
 
 1. List instances
 ```
-aws servicediscovery list-instances --service-id srv-pdd65idsnhjxxxx --region us-east-1
+aws servicediscovery list-instances --service-id srv-pdd65idsnhjxxxx --region <your-region>
 ```
 
 2. Get information about the namespace
 
 ```
 
-aws servicediscovery get-namespace --id ns-myjesubutlfxxxxx --region us-east-1
+aws servicediscovery get-namespace --id ns-myjesubutlfxxxxx --region <your-region>
 ```
 Output:
 ```
 {
     "Namespace": {
         "Id": "ns-myjesubutlfxwgij",
-        "Arn": "arn:aws:servicediscovery:us-east-1:<user-id>:namespace/ns-myjesubutlfxxxxx",
+        "Arn": "arn:aws:servicediscovery:<your-region>:<user-id>:namespace/ns-myjesubutlfxxxxx",
         "Name": "APJC-migration-workshop",
         "Type": "DNS_PRIVATE",
         "Properties": {
@@ -972,33 +939,33 @@ aws route53 list-resource-record-sets --hosted-zone-id Z49HTDOV4DS44 --region us
 ### Clean Up
 1. Deregister the service discovery service instances.
 ```
-aws servicediscovery deregister-instance --service-id srv-pdd65idsnhjxxxx --instance-id 16becc26-8558-4af1-9fbd-xxxxxxxx --region us-east-1
+aws servicediscovery deregister-instance --service-id srv-pdd65idsnhjxxxx --instance-id 16becc26-8558-4af1-9fbd-xxxxxxxx --region <your-region>
 ```
 
 2. Delete the service discovery service.
 
 ```
-aws servicediscovery delete-service --id srv-pdd65idsnhjxxxx --region us-east-1
+aws servicediscovery delete-service --id srv-pdd65idsnhjxxxx --region <your-region>
 ```
 
 3. Delete the service discovery namespace.
 ```
-aws servicediscovery delete-namespace --id ns-myjesubutlfxxxxx --region us-east-1
+aws servicediscovery delete-namespace --id ns-myjesubutlfxxxxx --region <your-region>
 ```
 
 4. Update the Amazon ECS service so the desired count is 0, which allows you to delete it.
 
 ```
-aws ecs update-service --cluster APJC-tech-2018-migration --service ecs-service-discovery --desired-count 0 --force-new-deployment --region us-east-1
+aws ecs update-service --cluster APJC-tech-2018-migration --service ecs-service-discovery --desired-count 0 --force-new-deployment --region <your-region>
 ```
 
 5. Delete the Amazon ECS service.
 
 ```
-aws ecs delete-service --cluster APJC-tech-2018-migration --service ecs-service-discovery --region us-east-1
+aws ecs delete-service --cluster APJC-tech-2018-migration --service ecs-service-discovery --region <your-region>
 ```
 
 6. Delete the Amazon ECS cluster.
 ```
-aws ecs delete-cluster --cluster APJC-tech-2018-migration  --region us-east-1
+aws ecs delete-cluster --cluster APJC-tech-2018-migration  --region <your-region>
 ```

@@ -647,10 +647,22 @@ aws ecr describe-images --repository-name user-service-repo
  3. [Add New service (optional)](#Add-New-service-(optional))
 
 ### Create a Stack using CloudFormation
+- We are going to use ECR image repositories created in Lab-5.
+- For example, 
+```
+user-service-repo : <account-id>.dkr.ecr.<your-region>.amazonaws.com/user-service-repo
+
+photo-service-repo : <account-id>.dkr.ecr.<your-region>.amazonaws.com/photo-service-repo
+```
 
 #### Create a S3 bucket
 1. Create a bucket in your region
 2. Create a folder in your bucket, for example, **<your_bucket>/ecr-cfn**
+3. This bucket path will be used for following tasks.
+For example, if you created a bucket name "your-name-initial/ecr-cfn" then, path will eb.
+```
+ https://s3-<region>.amazonaws.com/<your-name-initial>/ecr-cfn/
+```
 
 #### Change a S3 paths in files
 1. Change a S3 bucket path of master.yaml in step-01 and step-02
@@ -663,6 +675,7 @@ For example,
 You should change all S3 paths in master.yaml
 
 2. Change a image repo URL in step-01/services/user-service/service.yaml
+
 
 ```
 TaskDefinition:
@@ -679,7 +692,8 @@ TaskDefinition:
 ```
 
 #### Upload step-01 files
-1. Uploda step-01 files onto your bucket folder.
+1. Uploda step-01 files onto your bucket folder. You'd better use drag and drop for uploading files.
+
 ![Output](./imgs/05/01.png)
 
 #### Create a Stack using CloudFormation

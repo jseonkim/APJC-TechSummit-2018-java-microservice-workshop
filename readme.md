@@ -55,7 +55,7 @@ Eclipse IDE is optional as your dev IDE for studying this workshop but not manda
 ### Install all required SDK and tools
 
 **Mandatory**  
-1. Java SDK 8 or above  
+1. Java SDK 8 or above
 2. Git client, 
 3. Maven (3.5.3)
 4. AWS CLI : https://docs.aws.amazon.com/cli/latest/userguide/installing.html
@@ -71,7 +71,7 @@ If you don't have Homebrew then,
 
 
 ## Use an AMI
-1. Search **"APJC-2018-java-migration-workshop"** AMI in Community AMIs (Singapore region only)
+1. Search **"APJC-java-microservice-migration-workshop"** AMI in Community AMIs (Singapore region only)
 2. Select instance type "t2.large" at least.
 3. Attach a role to EC2 instances or configure AWS CLI with your credentials. IAM role should have enough access privileges(S3, DynamoDB, SSM, RDS, ECS, ECR).
 

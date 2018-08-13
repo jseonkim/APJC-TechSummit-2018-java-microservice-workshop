@@ -735,7 +735,7 @@ We will add one more serice, photo-service
 1. Check a **step-02** Cloufformation files.
 2. Check the differences with **step-01**
 
-- Changes
+- Differences.
 
 1. Added a new service in master.yml 
 ```
@@ -755,9 +755,10 @@ We will add one more serice, photo-service
 ```
 Outputs:
 
-    ServiceServiceUrl: 
+    PhotoServiceUrl: 
         Description: The URL endpoint for the product service
-        Value: !Join [ "/", [ !GetAtt ALB.Outputs.LoadBalancerUrl, "workshop/users/all" ]] 
+        Value: !Join [ "/", [ !GetAtt ALB.Outputs.LoadBalancerUrl, "workshop/photos/all" ]]
+
 ```
 
 2. Added new service.yaml in step-02/servies/photo-service/service.yaml

@@ -675,10 +675,10 @@ photo-service-repo : <account-id>.dkr.ecr.<your-region>.amazonaws.com/photo-serv
 ```
 
 #### Create a S3 bucket
-1. Create a bucket in your region
+1. Create a bucket in your region.
 2. Create a folder in your bucket, for example, **<your_bucket>/ecs-cfn**
 3. This bucket path will be used for following tasks.
-For example, if you created a bucket name "your-name-initial/ecs-cfn" then, path will eb.
+For example, if you created a bucket name "your-name-initial/ecs-cfn" then, path will be like below.
 ```
  https://s3-<region>.amazonaws.com/<your-name-initial>/ecs-cfn/
 ```

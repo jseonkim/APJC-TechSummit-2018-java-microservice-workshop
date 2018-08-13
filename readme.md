@@ -666,7 +666,7 @@ aws ecr describe-images --repository-name user-service-repo
  3. [Add New service (optional)](#Add-New-service-(optional))
 
 ### Create a Stack using CloudFormation
-- We are going to use ECR image repositories created in Lab-5.
+- We are going to use ECR image repositories created in Lab-4.
 - For example, 
 ```
 user-service-repo : <account-id>.dkr.ecr.<your-region>.amazonaws.com/user-service-repo

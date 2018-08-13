@@ -70,7 +70,8 @@ If you don't have Homebrew then,
 ```
 
 
-## Use an AMI
+## Use EC2 AMI
+- If you have some problems on installing tools in your Mac, then :
 1. Search **"APJC-java-microservice-migration-workshop"** AMI in Community AMIs (Singapore region only)
 2. Select instance type "t2.large" at least.
 3. Attach a role to EC2 instances or configure AWS CLI with your credentials. IAM role should have enough access privileges(S3, DynamoDB, SSM, RDS, ECS, ECR).

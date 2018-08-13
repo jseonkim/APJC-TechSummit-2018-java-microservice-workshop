@@ -128,7 +128,7 @@ cd <work_space>/module-01
 2. Compile and package without unit testing(Skip testing)
 
 ```
-mvn compile package -Dmaven.test.skip=true
+mvn clean compile package -Dmaven.test.skip=true
 
 ```
 	
@@ -202,7 +202,7 @@ Open *localhost:8080/users/add*, *localhost:8080/users*
 
 ```
 cd module-02
-mvn compile package -Dmaven.test.skip=true
+mvn clean compile package -Dmaven.test.skip=true
 java -jar target/module-02-0.1.0.jar
 ```
  
@@ -303,8 +303,9 @@ management.endpoints.web.exposure.exclude=env
 2. [Migrate to Mysql DB](#Migrate-to-Mysql-DB)  
 2.1 [Create an Aurora MySQL instance](#Create-an-Aurora-MySQL-instance)  
 2.2 [Install MySQL Client and Create a new user](#Install-MySQL-Client-and-Create-a-new-user)  
-2.3 [Configure ParameterStore in System Manager](#Configure-ParameterStore-in-System-Manager)
-3. [Create a Dynamo Database table](#Create-a-Dynamo-Database-table)  
+2.3 [Configure ParameterStore](#Configure-ParameterStore)  
+2.4 [Run application](#Run-application)
+3. [Dynamo Database table](#Dynamo-Database-table)  
 3.1 [Verify Created Table](#Verify-Created-Table)  
 3.2 [Run and check](#Run-and-check)
 
@@ -316,13 +317,13 @@ Comple and run both application
 
 ```
 cd <work_space>/module-03-ddb
-mvn compile package -Dmaven.test.skip=true
+mvn clean compile package -Dmaven.test.skip=true
 java -jar target/module-03-ddb-0.1.0.jar
 ```
 
 ```
 cd <work_space>/module-03-mysql
-mvn compile package -Dmaven.test.skip=true
+mvn clean compile package -Dmaven.test.skip=true
 java -jar target/module-03-mysql-0.1.0.jar
 ```
 
@@ -389,7 +390,7 @@ show tables;
 ```
 
 
-#### Configure ParameterStore in System Manager 
+#### Configure ParameterStore
 
 AWS Systems Manager Parameter Store provides secure, hierarchical storage for configuration data management and secrets management. You can store data such as passwords, database strings, and license codes as parameter values.
 Complete the following tasks to configure application parameters for ParameterStore (default region is <your-region>)
@@ -407,8 +408,8 @@ Complete the following tasks to configure application parameters for ParameterSt
 4. Specify values as you configured in previous steps.
 
 
-#### 2.3 Run your application again 
-Run Module-03-mysql.
+#### Run application 
+1. Run Module-03-mysql.
 After running, check tables of workshop database in MySQL Client
 
 ```
@@ -420,12 +421,16 @@ select * from User;
 
 ```
 
-#### 2.4 Test your applicaiton
+2. Test your applicaiton
 ```
 curl localhost:8080/workshop/users/all
 ```
 
-### Create a Dynamo Database table
+#### if you have errors
+- Check you are using VPN connection
+- Check security group of RDB 
+
+### Dynamo Database table
 
 #### Verify Created Table
 - Application (module-03-ddb) will create PhotoInfo table automatically.
@@ -525,6 +530,15 @@ docker run -d -p 80:8080 -e AWS_ACCESS_KEY_ID='<access-key>' \
 ```
 
 4. Repeat about steps for **module-03-ddb docker**.
+
+ 
+```
+cd ../module-04
+cp ../module-03-ddb/target/module-03-ddb-0.1.0.jar .
+
+docker build -t photo-service-img:latest . --build-arg JAR_FILE="module-03-ddb-0.1.0.jar"
+
+```
 
 When you run module-03-ddb docker, use 8081
 

@@ -49,7 +49,7 @@ Failure Mangement, Circuit Breaker pattern, Load Balancing
 ### Do not use VPN!!!
 
 ## Full installation
-The minimal tools required in this workshop are followings
+The minimal tools required in this workshop are followings.
 
 ### Install all required SDK and tools
 
@@ -725,7 +725,7 @@ TaskDefinition:
 
 #### Create a Stack using CloudFormation
 1. Specify the input file URL as your master.yaml URL
-2. Specify stack name, for example, 'APJC-workshop'
+2. Specify stack name, for example, 'APJC-workshop'. Do not exeed 24 characters for stack name.
 
 
 #### Check the result

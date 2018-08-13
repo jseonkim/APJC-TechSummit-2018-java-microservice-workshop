@@ -60,7 +60,15 @@ Eclipse IDE is optional as your dev IDE for studying this workshop but not manda
 3. Maven (3.5.3)
 4. AWS CLI : https://docs.aws.amazon.com/cli/latest/userguide/installing.html
 5. Docker : https://docs.docker.com/docker-for-mac/install/
-6. MySql Client : 
+6. MySql Client : If you have Homebrew in your Mac then,
+```
+brew install mysql
+```
+If you don't have Homebrew then,
+```
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
 
 ## Use an AMI
 1. Search **"APJC-2018-java-migration-workshop"** AMI in Community AMIs (Singapore region only)

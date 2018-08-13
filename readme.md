@@ -307,7 +307,7 @@ management.endpoints.web.exposure.exclude=env
 2.2 [Install MySQL Client and Create a new user](#Install-MySQL-Client-and-Create-a-new-user)  
 2.3 [Configure ParameterStore in System Manager](#Configure-ParameterStore-in-System-Manager)
 3. [Create a Dynamo Database table](#Create-a-Dynamo-Database-table)  
-3.1 [Create a Table](#Create-a-Table)  
+3.1 [Verify Created Table](#Verify-Created-Table)  
 3.2 [Run and check](#Run-and-check)
 
 ### Run your appplications
@@ -434,7 +434,7 @@ curl localhost:8080/workshop/users/all
 
 ### Create a Dynamo Database table
 
-#### Create a Table (optional)
+#### Verify Created Table
 - Application (module-03-ddb) will create PhotoInfo table automatically.
 
 - Check PhotoInfo table create by module-03-ddb application
@@ -642,7 +642,7 @@ aws ecr describe-images --repository-name user-service-repo
 1.2 [Change a S3 paths in files](#Change-a-S3-paths-in-files)  
 1.3 [Upload step-01 files](#Upload-step-01-files)  
 1.4 [Check the result](#Check-the-result)
-2. [Update a ECR Stack using CloudFormation](#Update-an-ECR-Stack-using-CloudFormation)  
+2. [Update a ECS Stack using CloudFormation](#Update-an-ECS-Stack-using-CloudFormation)  
 2.1 [Add new service](#Add-new-service)  
  3. [Add New service (optional)](#Add-New-service-(optional))
 
@@ -657,20 +657,20 @@ photo-service-repo : <account-id>.dkr.ecr.<your-region>.amazonaws.com/photo-serv
 
 #### Create a S3 bucket
 1. Create a bucket in your region
-2. Create a folder in your bucket, for example, **<your_bucket>/ecr-cfn**
+2. Create a folder in your bucket, for example, **<your_bucket>/ecs-cfn**
 3. This bucket path will be used for following tasks.
-For example, if you created a bucket name "your-name-initial/ecr-cfn" then, path will eb.
+For example, if you created a bucket name "your-name-initial/ecs-cfn" then, path will eb.
 ```
- https://s3-<region>.amazonaws.com/<your-name-initial>/ecr-cfn/
+ https://s3-<region>.amazonaws.com/<your-name-initial>/ecs-cfn/
 ```
 
 #### Change a S3 paths in files
-1. Change a S3 bucket path of master.yaml in step-01 and step-02
+1. Change a S3 bucket (your bucket) and Prefix(your prefix) of master.yaml in step-01 and step-02
 
 For example, 
 ```
       Properties:
-            TemplateURL: https://<s3-region>.amazonaws.com/<your-bucket>/ecs-cfn/infrastructure/vpc.yaml
+            TemplateURL: https://<s3-region>.amazonaws.com/<your-bucket>/<your prefix>/infrastructure/vpc.yaml
 ```
 You should change all S3 paths in master.yaml
 
@@ -709,7 +709,7 @@ TaskDefinition:
 3. Check the target groups in EC2 menu.
 4. Check the CloudWatch logs.
 
-### Update an ECR Stack using CloudFormation
+### Update an ECS Stack using CloudFormation
 
 ##### Add new service
 We will add one more serice, photo-service

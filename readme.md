@@ -49,8 +49,7 @@ Failure Mangement, Circuit Breaker pattern, Load Balancing
 ### Do not use VPN!!!
 
 ## Full installation
-The minimal tools required in this workshop is as follows
-Eclipse IDE is optional as your dev IDE for studying this workshop but not mandatory
+The minimal tools required in this workshop are followings
 
 ### Install all required SDK and tools
 

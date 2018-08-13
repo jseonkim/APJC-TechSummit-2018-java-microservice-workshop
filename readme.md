@@ -59,8 +59,8 @@ Eclipse IDE is optional as your dev IDE for studying this workshop but not manda
 2. Git client, 
 3. Maven (3.5.3)
 4. AWS CLI : https://docs.aws.amazon.com/cli/latest/userguide/installing.html
-5. Docker 
-6. MySql Client 
+5. Docker : https://docs.docker.com/docker-for-mac/install/
+6. MySql Client : 
 
 ## Use an AMI
 1. Search **"APJC-2018-java-migration-workshop"** AMI in Community AMIs (Singapore region only)
@@ -689,7 +689,7 @@ For example, if you created a bucket name "your-name-initial/ecs-cfn" then, path
 For example, 
 ```
       Properties:
-            TemplateURL: https://<s3-region>.amazonaws.com/<your-bucket>/<your prefix>/infrastructure/vpc.yaml
+            TemplateURL: https://s3-<region>.amazonaws.com/<your-bucket>/<your prefix>/infrastructure/vpc.yaml
 ```
 You should change all S3 paths in master.yaml
 
@@ -739,16 +739,16 @@ We will add one more serice, photo-service
 
 1. Added a new service in master.yml 
 ```
-    UserService:
+    PhotoService:
         Type: AWS::CloudFormation::Stack
         Properties:
-            TemplateURL: https://s3-<your-region>.amazonaws.com/<your bucket>/ecs-cloudformation/services/user-service/service.yaml
+            TemplateURL: https://s3-ap-southeast-1.amazonaws.com/seon-singapore-01/cloudformation-ecs/services/photo-service/service.yaml
             Parameters:
                 VPC: !GetAtt VPC.Outputs.VPC
                 Cluster: !GetAtt ECS.Outputs.Cluster
-                DesiredCount: 2
+                DesiredCount: 1
                 Listener: !GetAtt ALB.Outputs.Listener 
-                Path: /workshop/users*   
+                Path: /workshop/photos*  
 
 ```
 

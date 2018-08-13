@@ -353,7 +353,7 @@ You wll get error messages, if you don't have MySQL.
 5. Create database in configuration page (for example, workshop)
 	
 Name your Aurora database as TSA-Workshop, and keep the rest of the values as default.
-- Select db instances of your choice (e.g. db.t2.micro)
+- Select db instances of your choice (e.g. db.t2.small)
 - Keep the default multi-AZ
 - Cluster name: TSA-Workshop-Cluster
 - Database name: workshop

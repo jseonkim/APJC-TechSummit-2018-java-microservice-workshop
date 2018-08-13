@@ -17,6 +17,7 @@ public class PhotoInfo {
   private Integer img_id;
   private String locale;
   private String imgInfo;
+
   
   public Integer getId() {
 	return id;

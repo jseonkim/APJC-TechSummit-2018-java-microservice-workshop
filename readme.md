@@ -551,14 +551,27 @@ docker run -p 80:8081 \
 ```
 
 
-4. Check running docker and stop it
+5. Test your running docker
+
+For user docker
+```
+# test user docker
+curl 'localhost/workshop/users/all'
+```
+For photo docker (You need to stop previous docker)
+```
+# test photo docker
+curl 'localhost/workshop/photos/all'
+```
+
+6. Check running docker and stop it
 ```
 docker ps
 
 docker stop <CONTAINER ID>
 ```
 
-5. Remove all container
+7. USE FOLLWOING COMMAND, WEHN YOU NEED IT (Don't delete your images in this step)
 
 ```
 #stop all running docker
@@ -569,16 +582,6 @@ docker rm $(docker ps -a -q)
 
 # Delete all images
 docker rmi $(docker images -q)
-```
-
-#### Test your running docker
-```
-# test user docker
-curl 'localhost/workshop/users/all'
-
-# test photo docker
-curl 'localhost/workshop/photos/all'
-
 ```
 
 ### ECR

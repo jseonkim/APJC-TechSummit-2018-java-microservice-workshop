@@ -766,7 +766,7 @@ Outputs:
 #### Update the stack
 1. Upload all files in step-02 into the bucket
 2. Update a stack
-3. Check the changes
+3. Verify the changes
 
 ### Add New service (optional)
 - If you have enough time, then proceed this optional tasks

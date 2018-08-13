@@ -46,6 +46,8 @@ Failure Mangement, Circuit Breaker pattern, Load Balancing
 
 # Preparation
 
+### Do not use VPN!!!
+
 ## Full installation
 The minimal tools required in this workshop is as follows
 Eclipse IDE is optional as your dev IDE for studying this workshop but not mandatory
@@ -60,13 +62,11 @@ Eclipse IDE is optional as your dev IDE for studying this workshop but not manda
 5. Docker 
 6. MySql Client 
 
-**Optional**  
-- Eclipse Oxygen 3 or above
-- AWS plugin for Eclipse  : https://docs.aws.amazon.com/toolkit-for-eclipse/v1/user-guide/setup-install.html
-- AWS ECR CLI (optional) : https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_CLI_installation.html
-
-
 ## Use an AMI
+1. Search **"APJC-2018-java-migration-workshop"** AMI in Community AMIs (Singapore region only)
+2. Select instance type "t2.large" at least.
+3. Attach a role to EC2 instances or configure AWS CLI with your credentials. IAM role should have enough access privileges(S3, DynamoDB, SSM, RDS, ECS, ECR).
+
 
 # Labs : Migration from Monolithic to Microservice
 
@@ -84,7 +84,6 @@ Eclipse IDE is optional as your dev IDE for studying this workshop but not manda
 5. Lab-5 : Create a ECR
 6. Lab-6 : Logging and Service Discovery (optional)
 
-### Use Virginia-region (<your-region>)
 
 <hr>
 
@@ -301,7 +300,6 @@ management.endpoints.web.exposure.exclude=env
 ### Table of Contents
 1. [Run your appplications](#Run-your-appplications)  
 1.1 [Compile and run 2 applications](#Compile-and-run-2-applications)   
-1.2 [Test your HTTP endpoints with CURL](#Test-your-HTTP-endpoints-with-CURL)
 2. [Migrate to Mysql DB](#Migrate-to-Mysql-DB)  
 2.1 [Create an Aurora MySQL instance](#Create-an-Aurora-MySQL-instance)  
 2.2 [Install MySQL Client and Create a new user](#Install-MySQL-Client-and-Create-a-new-user)  
@@ -328,13 +326,8 @@ mvn compile package -Dmaven.test.skip=true
 java -jar target/module-03-mysql-0.1.0.jar
 ```
 
-#### Test your HTTP endpoints with CURL
+You wll get error messages, if you don't have MySQL.
 
-```
-# test user
-curl 'localhost:8080/workshop/users/all'
-
-```
 
 ### Migrate to Mysql DB
 
@@ -419,7 +412,7 @@ Run Module-03-mysql.
 After running, check tables of workshop database in MySQL Client
 
 ```
-user workshop;
+use workshop;
 
 show tables;
 
@@ -444,7 +437,7 @@ curl localhost:8080/workshop/users/all
 Run Module-03-ddb and check it again
 
 ```
-curl localhost:8080/workshop/photos/all
+curl localhost:8081/workshop/photos/all
 ```
 
 <hr>
@@ -564,6 +557,15 @@ docker rm $(docker ps -a -q)
 docker rmi $(docker images -q)
 ```
 
+#### Test your running docker
+```
+# test user docker
+curl 'localhost/workshop/users/all'
+
+# test photo docker
+curl 'localhost/workshop/photos/all'
+
+```
 
 ### ECR
 
@@ -784,7 +786,7 @@ Go to CloudWatch Logs and check the log group <your-created-stack>, for example,
 
 #### Create a service discovery
 
-1. Create a private service discovery namespace named tutorial within an existing VPC(default VPC in your region)
+1. Create a private service discovery namespace named "your-name" within an existing VPC(default VPC in your region)
 
 - dns-name : specify your name (eg: APJC-migration-workshop)
 - vpc : the vpc you want to use for ECS fargate

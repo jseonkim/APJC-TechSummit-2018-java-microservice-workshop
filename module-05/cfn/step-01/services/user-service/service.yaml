@@ -40,7 +40,6 @@ Parameters:
         Type: String
 
 Resources:
-
     Service: 
         Type: AWS::ECS::Service
         DependsOn: ListenerRule

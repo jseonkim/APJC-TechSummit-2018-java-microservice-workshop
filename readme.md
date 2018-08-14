@@ -95,6 +95,9 @@ If you don't have Homebrew then,
 1. Search **"APJC-java-microservice-migration-workshop"** AMI in Community AMIs (Singapore region only)
 2. Select instance type "t2.large" at least.
 3. After launching an instance, configure AWS CLI with your credentials(your credential must have enough privilege)
+```
+aws configure
+```
 
 
 # Labs : Migration from Monolithic to Microservice

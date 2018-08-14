@@ -1,5 +1,26 @@
 
 # 2018 APJC Tech Summit in Macau - Java microservice migration 
+![logo](./imgs/TechSummitMacau_white_Logo.png)
+
+### Welcome
+
+This contents covers fundamental steps of migration from monolithic to microservices for Java application.
+
+### Presenter
+
+- Seon Yong Park (Developer Specialist SA)
+
+
+### Lab Instructors
+
+Thanks to the following people for their assistance with this lab:
+
+- Richard Yeo (Solutions Architect)
+- Kelvin Kok (Solutions Architect)
+- Wei Shen Toh (Solutions Architect)
+- Jong Min Moon (Solutions Architect)
+- Sungmin Hong (Technical Trainer)
+
 
 <hr>
 

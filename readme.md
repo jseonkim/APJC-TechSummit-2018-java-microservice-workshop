@@ -92,7 +92,7 @@ If you don't have Homebrew then,
 
 ## Use EC2 AMI
 - If you have some problems on installing tools in your Mac, then :
-1. Search **"APJC-java-microservice-migration-workshop"** AMI in Community AMIs (Singapore region only)
+1. Search **"APJC-java-microservice-migration-workshop"** AMI in Community AMIs (**Singapore region only**)
 2. Select instance type "t2.large" at least. You don't need to attach a IAM role on this EC2 instance.
 3. After launching an instance, configure AWS CLI with your credentials(your credential must have enough privilege). 
 ```

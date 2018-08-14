@@ -73,7 +73,7 @@ If you don't have Homebrew then,
 - If you have some problems on installing tools in your Mac, then :
 1. Search **"APJC-java-microservice-migration-workshop"** AMI in Community AMIs (Singapore region only)
 2. Select instance type "t2.large" at least.
-3. Attach a role to EC2 instances or configure AWS CLI with your credentials. IAM role should have enough access privileges(S3, DynamoDB, SSM, RDS, ECS, ECR).
+3. After launching an instance, configure AWS CLI with your credentials(your credential must have enough privilege)
 
 
 # Labs : Migration from Monolithic to Microservice
@@ -777,7 +777,7 @@ Outputs:
 3. Verify the changes
 
 ### Add New service (optional)
-- If you have enough time, then proceed this optional tasks
+- If you have enough time, then proceed this optional tasks.
 - Use UserService Task
 - Create a new service with TargetGroup "workshop/images*"
 - Modify CFN templates, add new service, change it, and modify master.yaml
